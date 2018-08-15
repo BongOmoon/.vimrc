@@ -11,6 +11,16 @@ Plugin 'vim-airline/vim-airline'
 Plugin 'scrooloose/syntastic' " for checking code syntax
 Plugin 'ctrlpvim/ctrlp.vim' " find file - push '^ + p' to start
 Plugin 'nanotech/jellybeans.vim' " jellybeans Theme
+Plugin 'Lokaltog/vim-easymotion' " moving the cursor on one screen
+Plugin 'scrooloose/nerdcommenter' " annotate according to the file types
+Plugin 'edkolev/promptline.vim' " like vim-airline for terminal
+Plugin 'surround.vim' " string wrap
+Plugin 'vcscommand.vim' " vcs, svn
+Plugin 'pangloss/vim-javascript' " for javascript development
+Plugin 'junegunn/fzf' " general-purpose command-line fuzzy finder
+Plugin 'valloric/youcompleteme' " A CODE-COMPLETION ENGINE FOR VIM
+Plugin 'majutsushi/tagbar' " t provides an easy way to browse the tags of the current file and get an overview of its structure.
+Plugin 'terryma/vim-multiple-cursors' "
 
 call vundle#end()            " required
 filetype plugin indent on    " required
@@ -87,5 +97,53 @@ set ruler
 set nobackup
 set title
 
+map <Leader>rc :rightbelow vnew $MYVIMRC<CR>
 " for python
 let python_highlight_all = 1
+
+" for javascript
+let g:javascript_plugin_jsdoc = 1
+let g:javascript_plugin_ngdoc = 1
+let g:javascript_plugin_flow = 1
+augroup javascript_folding
+	au!
+	au FileType javascript setlocal foldmethod=syntax
+augroup END
+
+" for fzf commader
+map ; :Files<CR>
+
+" NERD commander
+map <leader>cc :NERDComComment<CR>
+map <leader>cn :NERDComNestedComment<CR>
+map <leader>cs :NERDComSexyComment<CR>
+map <leader>c<space> :NERDComToggleComment<CR>
+
+" vim-airline
+let g:airline#extensions#tabline#enabled = 1              " vim-airline 버퍼 목록 켜기
+let g:airline#extensions#tabline#fnamemod = ':t'          " vim-airline 버퍼 목록 파일명만 출력
+let g:airline#extensions#tabline#buffer_nr_show = 1       " buffer number를 보여준다
+let g:airline#extensions#tabline#buffer_nr_format = '%s:' " buffer number format
+
+nnoremap <C-S-t> :enew<Enter>         " 새로운 버퍼를 연다
+nnoremap <C-F5> :bprevious!<Enter>    " 이전 버퍼로 이동
+nnoremap <C-F6> :bnext!<Enter>        " 다음 버퍼로 이동
+nnoremap <C-F4> :bp <BAR> bd #<Enter> " 현재 버퍼를 닫고 이전 버퍼로 이동
+
+" vim tagbar
+nmap <F8> :TagbarToggle<CR>
+
+" vim-multiple-cursor Mapping
+" If you dont like the plugin taking over your key bindings, you can turn it off and reassign them the way you want:
+" viml
+let g:multi_cursor_use_default_mapping=0
+
+" Default mapping
+let g:multi_cursor_start_word_key      = '<C-n>'
+let g:multi_cursor_select_all_word_key = '<A-n>'
+let g:multi_cursor_start_key           = 'g<C-n>'
+let g:multi_cursor_select_all_key      = 'g<A-n>'
+let g:multi_cursor_next_key            = '<C-n>'
+let g:multi_cursor_prev_key            = '<C-p>'
+let g:multi_cursor_skip_key            = '<C-x>'
+let g:multi_cursor_quit_key            = '<Esc>'
