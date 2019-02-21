@@ -1,149 +1,434 @@
-set nocompatible              " be iMproved, required
-filetype off                  " required
+"======================================================================
+"======================================================================
+"                        Bono's .vimrc file
+"======================================================================
+"======================================================================
+
+"======================================================================
+" Plugins(Vundle)
+"======================================================================
+set nocompatible "Use vim settings rather than vi settings
+filetype off
 
 " set the runtime path to include Vundle and initialize
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 
 Plugin 'VundleVim/Vundle.vim' " let Vundle manage Vundle, required
-Plugin 'scrooloose/nerdtree'  " like IDE FileTree
+
+Plugin 'tpope/vim-fugitive' " a Git wrapper so awesome
+Plugin 'airblade/vim-gitgutter'
+
+Plugin 'scrooloose/nerdtree' " a tree explorer
+Plugin 'ctrlpvim/ctrlp.vim' " fuzzy file, buffer, mru, tag, etc finder
+
 Plugin 'vim-airline/vim-airline'
-Plugin 'scrooloose/syntastic' " for checking code syntax
-Plugin 'ctrlpvim/ctrlp.vim' " find file - push '^ + p' to start
-Plugin 'nanotech/jellybeans.vim' " jellybeans Theme
-Plugin 'Lokaltog/vim-easymotion' " moving the cursor on one screen
-Plugin 'scrooloose/nerdcommenter' " annotate according to the file types
-Plugin 'edkolev/promptline.vim' " like vim-airline for terminal
-Plugin 'surround.vim' " string wrap
-Plugin 'vcscommand.vim' " vcs, svn
-Plugin 'pangloss/vim-javascript' " for javascript development
-Plugin 'junegunn/fzf' " general-purpose command-line fuzzy finder
-Plugin 'valloric/youcompleteme' " A CODE-COMPLETION ENGINE FOR VIM
-Plugin 'majutsushi/tagbar' " t provides an easy way to browse the tags of the current file and get an overview of its structure.
-Plugin 'terryma/vim-multiple-cursors' "
+Plugin 'vim-airline/vim-airline-themes'
+
+Plugin 'tpope/vim-surround' " quoting/parenthesizing made simple
+Plugin 'scrooloose/nerdcommenter' " intensely orgasmic commenting
+
+Plugin 'valloric/youcompleteme' " a code-completion engine
+Plugin 'scrooloose/syntastic' " syntax checking hacks
+Plugin 'plasticboy/vim-markdown' " Markdown syntax
+Plugin 'pangloss/vim-javascript' "vastly improved js indentation and syntax support
+
+Plugin 'altercation/vim-colors-solarized' " precision colorscheme
+
 
 call vundle#end()            " required
-filetype plugin indent on    " required
 
-" NERDTree ON/OFF Hotkey '\nt' / '\ntt'
-map <Leader>nt <ESC>:NERDTree<CR>
-map <Leader>ntt <ESC>:NERDTreeToggle<CR>
 
-"use to ignore dir such as Third-party dir, .git dir in project
-let g:ctrlp_custom_ignore = {
-  \ 'dir':  '\.git$\|public$\|log$\|tmp$\|vendor$',
-  \ 'file': '\v\.(exe|so|dll)$'
-  \ }
+"======================================================================
+" General Settings
+"======================================================================
+" enable filetype plugins
+filetype plugin indent on
 
-" apply color scheme
-" color jellybeans
+" Sets how many lines of history VIM has to remember
+set history=500
 
-" Vim5 and later versions support syntax highlighting. Uncommenting the next
-" line enables syntax highlighting by default.
-if has("syntax")
-  syntax on
+" Set to auto read when a file is changed from the outside
+set autoread
+
+" With a map leader it's possible to do extra key combinations
+let mapleader = ","
+
+" Turn backup off, since most stuff is in SVN, git et.c anyway...
+set nobackup
+set nowb
+set noswapfile
+
+
+"======================================================================
+" Vim User Interface(VUI)
+"======================================================================
+" Set 5 lines to the cursor - when moving vertically using j/k
+set so=5
+
+" Avoid garbled characters in Chinese language windows OS
+let $LANG='en' 
+set langmenu=en
+source $VIMRUNTIME/delmenu.vim
+source $VIMRUNTIME/menu.vim
+
+" Turn on the Wild menu
+set wildmenu
+
+" Ignore compiled files
+set wildignore=*.o,*~,*.pyc
+if has("win16") || has("win32")
+    set wildignore+=.git\*,.hg\*,.svn\*
+else
+    set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store
 endif
 
-" If using a dark background within the editing area and syntax highlighting
-" turn on this option as well
+"Always show current position
+set ruler
+
+" Height of the command bar
+set cmdheight=2
+
+" A buffer becomes hidden when it is abandoned
+set hid
+
+" Configure backspace so it acts as it should act
+set backspace=eol,start,indent
+set whichwrap+=<,>,h,l
+
+" Ignore case when searching
+set ignorecase
+
+" When searching try to be smart about cases 
+set smartcase
+
+" Highlight search results
+set hlsearch
+
+" Makes search act like search in modern browsers
+set incsearch 
+
+" Don't redraw while executing macros (good performance config)
+set lazyredraw 
+
+" For regular expressions turn magic on
+set magic
+
+" Show matching brackets when text indicator is over them
+set showmatch 
+
+" How many tenths of a second to blink when matching brackets
+set mat=2
+
+set nu
+
+" No annoying sound on errors
+set noerrorbells
+set novisualbell
+set t_vb=
+set tm=500
+
+" Properly disable sound on errors on MacVim
+if has("gui_macvim")
+    autocmd GUIEnter * set vb t_vb=
+endif
+
+" Add a bit extra margin to the left
+set foldcolumn=1
+
+" Enable syntax highlighting
+syntax enable 
+
+"-----------------------Text, tab and indent related-------------------
+" Use spaces instead of tabs
+set expandtab
+
+" Be smart when using tabs ;)
+set smarttab
+
+" 1 tab == 4 spaces
+set shiftwidth=4
+set tabstop=4
+
+" Linebreak on 500 characters
+set lbr
+set tw=500
+
+set ai "Auto indent
+set si "Smart indent
+set wrap "Wrap lines
+
+"---------------------------------buffers----------------------------
+" Specify the behavior when switching between buffers 
+try
+    set switchbuf=useopen,usetab,newtab
+    set stal=2
+catch
+endtry
+
+" Return to last edit position when opening files (You want this!)
+au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+
+
+"------------------------Status line-------------------------------
+" Always show the status line
+set laststatus=2
+
+" Format the status line
+set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ Line:\ %l\ \ Column:\ %c
+
+
+"======================================================================
+" Colors and Fonts
+"======================================================================
+" Enable 256 colors palette in Gnome Terminal
+if $COLORTERM == 'gnome-terminal'
+    set t_Co=256
+endif
+
+try
+    colorscheme desert
+catch
+endtry
+
 set background=dark
 
-" Uncomment the following to have Vim jump to the last position when
-" reopening a file
+" Set extra options when running in GUI mode
+if has("gui_running")
+    set guioptions-=T
+    set guioptions-=e
+    set t_Co=256
+    set guitablabel=%M\ %t
+endif
+
+" Set utf8 as standard encoding and en_US as the
+" standard language
+set encoding=utf8
+
+" Use Unix as the standard file type
+set ffs=unix,dos,mac
+
+
+"======================================================================
+" Key Mappings
+"======================================================================
+"----------------------------general--------------------------------
+" :W sudo saves the file 
+" (useful for handling the permission-denied error)
+command W w !sudo tee % > /dev/null
+
+
+"--------------------------Visual mode related-----------------------
+" Visual mode pressing * or # searches for the current selection
+" Super useful! From an idea by Michael Naumann
+vnoremap <silent> * :<C-u>call VisualSelection('', '')<CR>/<C-R>=@/<CR><CR>
+vnoremap <silent> # :<C-u>call VisualSelection('', '')<CR>?<C-R>=@/<CR><CR>
+
+
+"---------------Moving around, tabs, windows and buffers-------------
+" Map <Space> to / (search) and Ctrl-<Space> to ? (backwards search)
+map <space> /
+map <C-space> ?
+
+" Disable highlight when <leader><cr> is pressed
+map <silent> <leader><cr> :noh<cr>
+
+" Smart way to move between windows
+map <C-j> <C-W>j
+map <C-k> <C-W>k
+map <C-h> <C-W>h
+map <C-l> <C-W>l
+
+" Close the current buffer
+map <leader>bd :Bclose<cr>:tabclose<cr>gT
+
+" Close all the buffers
+map <leader>ba :bufdo bd<cr>
+
+map <leader>l :bnext<cr>
+map <leader>h :bprevious<cr>
+
+" Useful mappings for managing tabs
+map <leader>tn :tabnew<cr>
+map <leader>to :tabonly<cr>
+map <leader>tc :tabclose<cr>
+map <leader>tm :tabmove 
+map <leader>t<leader> :tabnext 
+
+" Let 'tl' toggle between this and the last accessed tab
+let g:lasttab = 1
+nmap <Leader>tl :exe "tabn ".g:lasttab<CR>
+au TabLeave * let g:lasttab = tabpagenr()
+
+
+" Opens a new tab with the current buffer's path
+" Super useful when editing files in the same directory
+map <leader>te :tabedit <c-r>=expand("%:p:h")<cr>/
+
+" Switch CWD to the directory of the open buffer
+map <leader>cd :cd %:p:h<cr>:pwd<cr>
+
+
+"---------------------------Editing mappings---------------------------
+" Remap VIM 0 to first non-blank character
+map 0 ^
+
+" Move a line of text using ALT+[jk] or Command+[jk] on mac
+nmap <M-j> mz:m+<cr>`z
+nmap <M-k> mz:m-2<cr>`z
+vmap <M-j> :m'>+<cr>`<my`>mzgv`yo`z
+vmap <M-k> :m'<-2<cr>`>my`<mzgv`yo`z
+
+if has("mac") || has("macunix")
+    nmap <D-j> <M-j>
+    nmap <D-k> <M-k>
+    vmap <D-j> <M-j>
+    vmap <D-k> <M-k>
+endif
+
+" Delete trailing white space on save, useful for some filetypes ;)
+fun! CleanExtraSpaces()
+    let save_cursor = getpos(".")
+    let old_query = getreg('/')
+    silent! %s/\s\+$//e
+    call setpos('.', save_cursor)
+    call setreg('/', old_query)
+endfun
+
 if has("autocmd")
-  au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+    autocmd BufWritePre *.txt,*.js,*.py,*.wiki,*.sh,*.coffee :call CleanExtraSpaces()
 endif
 
-" Uncomment the following to have Vim load indentation rules and plugins
-" according to the detected filetype.
-"if has("autocmd")
-"  filetype plugin indent on
-"endif
 
-"set showcmd		" Show (partial) command in status line.
-set showmatch		" Show matching brackets.
-set ignorecase		" Do case insensitive matching
-set smartcase		" Do smart case matching
-set incsearch		" Incremental search
-set autowrite		" Automatically save before commands like :next and :make
-"set hidden		" Hide buffers when they are abandoned
-set mouse=a		" Enable mouse usage (all modes)
+"---------------------------Spell Checking----------------------------
+" Pressing ,ss will toggle and untoggle spell checking
+map <leader>ss :setlocal spell!<cr>
 
-" Source a global configuration file if available
-if filereadable("/etc/vim/vimrc.local")
-  source /etc/vim/vimrc.local
-endif
+" Shortcuts using <leader>
+map <leader>sn ]s
+map <leader>sp [s
+map <leader>sa zg
+map <leader>s? z=
 
-" intent
-set autoindent
-set smartindent
-set cindent
 
-" about tab
-set ts=4
-set shiftwidth=4
+" -------------------------------Misc---------------------------------
+" Remove the Windows ^M - when the encodings gets messed up
+noremap <Leader>m mmHmt:%s/<C-V><cr>//ge<cr>'tzt'm
 
-" Line number
-set number
+" Quickly open a buffer for scribble
+map <leader>q :e ~/buffer<cr>
 
-set laststatus=2
-set statusline=\ %<%l:%v\ [%p]%=%a\ %h%m%r\ %F\
+" Quickly open a markdown buffer for scribble
+map <leader>x :e ~/buffer.md<cr>
 
-" File Incoding
-set fileencodings=utf-8,euc-kr
+" Toggle paste mode on and off
+map <leader>pp :setlocal paste!<cr>
 
-set history=1000
-set ruler
-set nobackup
-set title
 
-map <Leader>rc :rightbelow vnew $MYVIMRC<CR>
-" for python
-let python_highlight_all = 1
+"======================================================================
+" Helper functions
+"======================================================================
+" Returns true if paste mode is enabled
+function! HasPaste()
+    if &paste
+        return 'PASTE MODE  '
+    endif
+    return ''
+endfunction
 
-" for javascript
-let g:javascript_plugin_jsdoc = 1
-let g:javascript_plugin_ngdoc = 1
-let g:javascript_plugin_flow = 1
-augroup javascript_folding
-	au!
-	au FileType javascript setlocal foldmethod=syntax
-augroup END
+" Don't close window, when deleting a buffer
+command! Bclose call <SID>BufcloseCloseIt()
+function! <SID>BufcloseCloseIt()
+    let l:currentBufNum = bufnr("%")
+    let l:alternateBufNum = bufnr("#")
 
-" for fzf commader
-map ; :Files<CR>
+    if buflisted(l:alternateBufNum)
+        buffer #
+    else
+        bnext
+    endif
 
-" NERD commander
-map <leader>cc :NERDComComment<CR>
-map <leader>cn :NERDComNestedComment<CR>
-map <leader>cs :NERDComSexyComment<CR>
-map <leader>c<space> :NERDComToggleComment<CR>
+    if bufnr("%") == l:currentBufNum
+        new
+    endif
 
-" vim-airline
-let g:airline#extensions#tabline#enabled = 1              " vim-airline 버퍼 목록 켜기
-let g:airline#extensions#tabline#fnamemod = ':t'          " vim-airline 버퍼 목록 파일명만 출력
-let g:airline#extensions#tabline#buffer_nr_show = 1       " buffer number를 보여준다
-let g:airline#extensions#tabline#buffer_nr_format = '%s:' " buffer number format
+    if buflisted(l:currentBufNum)
+        execute("bdelete! ".l:currentBufNum)
+    endif
+endfunction
 
-nnoremap <C-S-t> :enew<Enter>         " 새로운 버퍼를 연다
-nnoremap <C-F5> :bprevious!<Enter>    " 이전 버퍼로 이동
-nnoremap <C-F6> :bnext!<Enter>        " 다음 버퍼로 이동
-nnoremap <C-F4> :bp <BAR> bd #<Enter> " 현재 버퍼를 닫고 이전 버퍼로 이동
+function! CmdLine(str)
+    call feedkeys(":" . a:str)
+endfunction 
 
-" vim tagbar
-nmap <F8> :TagbarToggle<CR>
+function! VisualSelection(direction, extra_filter) range
+    let l:saved_reg = @"
+    execute "normal! vgvy"
 
-" vim-multiple-cursor Mapping
-" If you dont like the plugin taking over your key bindings, you can turn it off and reassign them the way you want:
-" viml
-let g:multi_cursor_use_default_mapping=0
+    let l:pattern = escape(@", "\\/.*'$^~[]")
+    let l:pattern = substitute(l:pattern, "\n$", "", "")
 
-" Default mapping
-let g:multi_cursor_start_word_key      = '<C-n>'
-let g:multi_cursor_select_all_word_key = '<A-n>'
-let g:multi_cursor_start_key           = 'g<C-n>'
-let g:multi_cursor_select_all_key      = 'g<A-n>'
-let g:multi_cursor_next_key            = '<C-n>'
-let g:multi_cursor_prev_key            = '<C-p>'
-let g:multi_cursor_skip_key            = '<C-x>'
-let g:multi_cursor_quit_key            = '<Esc>'
+    if a:direction == 'gv'
+        call CmdLine("Ack '" . l:pattern . "' " )
+    elseif a:direction == 'replace'
+        call CmdLine("%s" . '/'. l:pattern . '/')
+    endif
+
+    let @/ = l:pattern
+    let @" = l:saved_reg
+endfunction
+
+
+
+"======================================================================
+" Plugin Settings
+"======================================================================
+"------------------------------Syntastic-------------------------------
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+
+
+"------------------------------airline theme---------------------------
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#left_sep = ' '
+let g:airline#extensions#tabline#left_alt_sep = '|'
+
+
+" --------------------------------nerd tree-----------------------------
+autocmd StdinReadPre * let s:std_in=1
+autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+map <C-n> :NERDTreeToggle<CR>
+let g:NERDTreeDirArrowExpandable = '▸'
+let g:NERDTreeDirArrowCollapsible = '▾'
+
+
+"---------------------------nerd commenter-----------------------------
+" Add spaces after comment delimiters by default
+let g:NERDSpaceDelims = 1
+
+" Use compact syntax for prettified multi-line comments
+let g:NERDCompactSexyComs = 1
+
+" Align line-wise comment delimiters flush left instead of following code indentation
+let g:NERDDefaultAlign = 'left'
+
+" Set a language to use its alternate delimiters by default
+let g:NERDAltDelims_java = 1
+
+" Add your own custom formats or override the defaults
+let g:NERDCustomDelimiters = { 'c': { 'left': '/**','right': '*/' } }
+
+" Allow commenting and inverting empty lines (useful when commenting a region)
+let g:NERDCommentEmptyLines = 1
+
+" Enable trimming of trailing whitespace when uncommenting
+let g:NERDTrimTrailingWhitespace = 1
+
+" Enable NERDCommenterToggle to check all selected lines is commented or not 
+let g:NERDToggleCheckAllLines = 1
