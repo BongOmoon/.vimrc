@@ -1,6 +1,7 @@
-#MY VIM SETTING
->THIS PROJECT IS NOT SOMETHING OF SOFTWARE
->
->I UPLOAD JUST MY .vimrc FILE
->
->HAVE A HAPPY HACKING TIME~
+# MY VIM SETTING
+## 1. Introdution
+This is not something of software. I upload my .vimrc(VIM setting) file.
+
+___HAVE A HAPPY HACKING TIME~___
+
+## 2. Plugins I used
